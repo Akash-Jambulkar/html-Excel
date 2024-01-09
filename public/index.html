@@ -1,0 +1,68 @@
+<!-- public/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excel Form</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="form-container">
+      <h1>Excel Form</h1>
+      <form action="/submit" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required>
+        <br>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <div class="data-container">
+      <h2>Data from Excel</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Age</th>
+          </tr>
+        </thead>
+        <tbody id="dataList"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    async function fetchData() {
+      const response = await fetch('/data');
+      const data = await response.json();
+      const dataList = document.getElementById('dataList');
+      dataList.innerHTML = '';
+
+      if (Array.isArray(data)) {
+        if (data.length === 0) {
+          console.log('No data found in the Excel file.');
+        } else {
+          data.forEach(entry => {
+            const name = entry.Name || 'Unknown';
+            const age = entry.Age || 'Unknown';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `<td>${name}</td><td>${age}</td>`;
+            dataList.appendChild(row);
+          });
+        }
+      } else {
+        console.error('Invalid data format:', data);
+      }
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>
